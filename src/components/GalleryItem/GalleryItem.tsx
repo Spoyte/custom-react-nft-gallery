@@ -42,6 +42,8 @@ export const GalleryItem: React.FC<GalleryItemProps> = ({
   itemContainerStyle,
   imgContainerStyle,
 }) => {
+  const [isLoaded, setIsLoaded] = React.useState(false);
+
   const assetTitle = getAssetTitle(asset);
 
   const renderAssetMedia = () => {
@@ -64,8 +66,9 @@ export const GalleryItem: React.FC<GalleryItemProps> = ({
       return (
         <video
           className={joinClassNames(
-            'rnftg-w-full rnftg-h-full rnftg-object-cover rnftg-cursor-pointer',
-            metadataIsVisible ? 'rnftg-rounded-t-2xl' : 'rnftg-rounded-2xl'
+            'rnftg-w-full rnftg-h-full rnftg-object-cover rnftg-cursor-pointer rnftg-transition-opacity rnftg-duration-500',
+            metadataIsVisible ? 'rnftg-rounded-t-2xl' : 'rnftg-rounded-2xl',
+            isLoaded ? 'rnftg-opacity-100' : 'rnftg-opacity-0'
           )}
           src={asset.image_preview_url}
           preload="auto"
@@ -73,6 +76,7 @@ export const GalleryItem: React.FC<GalleryItemProps> = ({
           autoPlay
           loop
           playsInline
+          onLoadedData={() => setIsLoaded(true)}
         ></video>
       );
     }
@@ -80,12 +84,14 @@ export const GalleryItem: React.FC<GalleryItemProps> = ({
     return (
       <img
         className={joinClassNames(
-          'rnftg-w-full rnftg-h-full rnftg-object-cover rnftg-cursor-pointer',
-          metadataIsVisible ? 'rnftg-rounded-t-2xl' : 'rnftg-rounded-2xl'
+          'rnftg-w-full rnftg-h-full rnftg-object-cover rnftg-cursor-pointer rnftg-transition-opacity rnftg-duration-500',
+          metadataIsVisible ? 'rnftg-rounded-t-2xl' : 'rnftg-rounded-2xl',
+          isLoaded ? 'rnftg-opacity-100' : 'rnftg-opacity-0'
         )}
         src={asset.image_preview_url}
         alt={asset.name}
         loading="lazy"
+        onLoad={() => setIsLoaded(true)}
       />
     );
   };

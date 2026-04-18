@@ -189,7 +189,8 @@ export const NftGallery: React.FC<NftGalleryProps> = ({
     apiKey: NftGalleryProps['openseaApiKey'],
     isProxyApi: NftGalleryProps['isProxyApi'],
     apiUrl: NftGalleryProps['apiUrl'],
-    autoRetry: NftGalleryProps['autoRetry']
+    autoRetry: NftGalleryProps['autoRetry'],
+    showcaseItemIds: NftGalleryProps['showcaseItemIds']
   ) => {
     setIsLoading(true);
     // Stop if we already have 1000+ items in play.
@@ -201,9 +202,9 @@ export const NftGallery: React.FC<NftGalleryProps> = ({
     let shouldFetch = true;
     let currentOffset = 0;
     let cursor = '';
+    let accumulatedAssets: OpenseaAsset[] = [];
 
     // Grab all assets of this address to filter down to showcase-only.
-    // TODO: optimise this to exit as soon as all showcase items have been resolved.
     while (shouldFetch) {
       const response = await fetchOpenseaAssets({
         owner,
@@ -219,12 +220,21 @@ export const NftGallery: React.FC<NftGalleryProps> = ({
       } else {
         currentOffset += OPENSEA_API_OFFSET;
         cursor = nextCursor;
+        accumulatedAssets = [...accumulatedAssets, ...rawAssets];
         setAssets((prevAssets) => [...prevAssets, ...rawAssets]);
         if (rawAssets.length !== 0) setIsLoading(false);
         setNextCursor(nextCursor);
         setHasError(hasError);
-        // Terminate if next cursor is `null` (i.e. last page) or we hit the asset limit.
-        if (cursor === null || currentOffset >= MAX_OFFSET) {
+        
+        let foundAllShowcaseItems = false;
+        if (showcaseItemIds && showcaseItemIds.length > 0) {
+          foundAllShowcaseItems = showcaseItemIds.every(id => 
+            accumulatedAssets.some(asset => `${asset.asset_contract?.address}/${asset.token_id}` === id)
+          );
+        }
+
+        // Terminate if next cursor is `null` (i.e. last page), we hit the asset limit, or found all showcase items.
+        if (cursor === null || currentOffset >= MAX_OFFSET || foundAllShowcaseItems) {
           shouldFetch = false;
           setIsLoading(false);
         }
@@ -239,7 +249,8 @@ export const NftGallery: React.FC<NftGalleryProps> = ({
         openseaApiKey,
         isProxyApi,
         apiUrl,
-        autoRetry
+        autoRetry,
+        showcaseItemIds
       );
     } else {
       loadAssetsPage(
@@ -259,6 +270,7 @@ export const NftGallery: React.FC<NftGalleryProps> = ({
     apiUrl,
     autoRetry,
     currentCursor,
+    showcaseItemIds,
   ]);
 
   const updateShowcaseAssets = (

@@ -12,6 +12,8 @@
   display: -ms-flexbox;
   display: flex;
   visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
   /* [1] */
   position: fixed;
   /* [2] */
@@ -35,6 +37,7 @@
 .perfundo__overlay:target,
 .perfundo__overlay.is-active {
   visibility: visible;
+  opacity: 1;
   /* [1] */
 }
 
@@ -69,12 +72,17 @@
  */
 .perfundo__figure {
   display: none;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.3s ease, transform 0.3s ease;
   /* [1] */
   margin: 1.5em;
 }
 :target > .perfundo__figure,
 .is-active > .perfundo__figure {
   display: block;
+  opacity: 1;
+  transform: scale(1);
   /* [2] */
 }
 

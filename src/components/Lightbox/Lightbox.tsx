@@ -17,6 +17,29 @@ export const Lightbox: React.FC<LightboxProps> = ({
   increaseLightboxIndex,
   decreaseLightboxIndex,
 }) => {
+  const [touchStart, setTouchStart] = React.useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStart === null) return;
+    const touchEnd = e.changedTouches[0].clientX;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      increaseLightboxIndex();
+      window.location.assign(`#lightbox-${index + 1}`);
+    } else if (isRightSwipe) {
+      decreaseLightboxIndex();
+      window.location.assign(`#lightbox-${index - 1}`);
+    }
+    setTouchStart(null);
+  };
+
   return (
     <div
       id={`lightbox-${index}`}
@@ -24,6 +47,8 @@ export const Lightbox: React.FC<LightboxProps> = ({
       onClick={() => {
         window.location.assign('#lightbox-untarget');
       }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <figure
         className="perfundo__content perfundo__figure"

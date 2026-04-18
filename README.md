@@ -97,6 +97,45 @@ return (
 );
 ```
 
+### Common Patterns / Configurations
+
+#### Showcase Mode
+If you only want to display specific NFTs rather than an entire collection, you can use `showcaseMode` combined with an array of `showcaseItemIds`. The ID must follow the pattern `{:assetContractAddress}/{:tokenId}`.
+
+```tsx
+<NftGallery
+  ownerAddress="vitalik.eth"
+  showcaseMode={true}
+  showcaseItemIds={[
+    "0xabcdef.../123", 
+    "0xa1b2c3.../789"
+  ]}
+/>
+```
+
+#### Inline Gallery
+To render the gallery as a single horizontal scrolling row (ideal for embedding within other content):
+
+```tsx
+<NftGallery
+  ownerAddress="vitalik.eth"
+  isInline={true}
+  galleryContainerStyle={{ padding: 0 }}
+/>
+```
+
+#### Disabling Features for a Cleaner UI
+You can easily disable metadata, the lightbox, and external links for a minimalist look:
+
+```tsx
+<NftGallery
+  ownerAddress="vitalik.eth"
+  metadataIsVisible={false}
+  hasLightbox={false}
+  hasExternalLinks={false}
+/>
+```
+
 ## API
 
 ````ts
@@ -206,6 +245,6 @@ interface NftGalleryProps {
 - [x] feat: support keyboard navigation for lightbox
 - [x] feat: remove "load more" button and auto-resolve all assets via recursive pagination on OpenSea API (P1)
 - [x] feat: use card placeholders instead of spinner for loading phase (P1)
-- [ ] docs: document component props and common patterns/configurations better (P1)
-- [ ] feat: add transitions on thumbnail load, enter/exit lightbox, forward/back lightbox item (P2)
-- [ ] feat: support swiping in lightbox for touch devices (P2)
+- [x] docs: document component props and common patterns/configurations better (P1)
+- [x] feat: add transitions on thumbnail load, enter/exit lightbox, forward/back lightbox item (P2)
+- [x] feat: support swiping in lightbox for touch devices (P2)
